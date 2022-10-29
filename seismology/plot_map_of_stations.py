@@ -5,27 +5,29 @@ from csv import reader
  
  
 def get_data(csv_file, name_pos, amount_pos, lat_pos, lon_pos, alt_pos):
-       names, amount, lat, lon, alt = [], [], [], [], []
-       with open(csv_file, 'r') as file:
-           csv_reader = reader(file)
-           for row in csv_reader:
-               names.append(row[name_pos])
-               amount.append(row[amount_pos])
-               lat.append(row[lat_pos])
-               lon.append(row[lon_pos])
-               alt.append(row[alt_pos])
- 
-           del names[0]
-           del amount[0]
-           del lat[0]
-           del lon[0]
-           del alt[0]
- 
-           return names, amount, lon, lat, alt
+    names, amount, lat, lon, alt = [], [], [], [], []
+    with open(csv_file, 'r') as file:
+        csv_reader = reader(file)
+        for row in csv_reader:
+            if row[name_pos]:
+                names.append(row[name_pos])
+                amount.append(row[amount_pos])
+                lat.append(row[lat_pos])
+                lon.append(row[lon_pos])
+                alt.append(row[alt_pos])
+
+        for _ in range(2): 
+            del names[0]
+            del amount[0]
+            del lat[0]
+            del lon[0]
+            del alt[0]
+    
+    return names, amount, lon, lat, alt
  
           
  
-names, amount, lon, lat, alt = get_data('./initial-data/seismology_with_altitudes.csv', 3, 4, 5, 6, 7)
+names, amount, lon, lat, alt = get_data('./initial-data/seismology_all.csv', 3, 4, 7, 6, 8)
 # print(list(map(float, amount))) 
  
 lon_x = list(map(float, lon))         

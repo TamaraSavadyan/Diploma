@@ -79,7 +79,7 @@ def main():
    seismolog = Seismology_automation()
  
    stations = seismolog.get_stations(
-       csv_file='./initial-data/seismology.csv', station_name_position=(1, 2))
+       csv_file='./initial-data/seismology_all.csv', station_name_position=(1, 2))
    # print('\n', stations)
  
    stations_dict = seismolog.count_data(stations)

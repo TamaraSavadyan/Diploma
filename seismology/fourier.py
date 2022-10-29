@@ -36,20 +36,20 @@ class Seismology:
                            new_row = row.split(" ")
                            time_step = float(new_row[1])
  
-                       # else:
-                       #     time.append(i*time_step)
-                       #     amplitude.append(float(row))        
+                       else:
+                           time.append(i*time_step)
+                           amplitude.append(float(row))        
  
                        # saving data for every second (not time_step)   
-                       elif not (i % (1/time_step)):
-                           ampl = self.mean(samples)
-                           amplitude.append(ampl)
-                           samples.clear()
+                    #    elif not (i % (1/time_step)):
+                    #        ampl = self.mean(samples)
+                    #        amplitude.append(ampl)
+                    #        samples.clear()
  
-                           time.append(i*time_step)
+                    #        time.append(i*time_step)
  
-                       else:
-                           samples.append(float(row))     
+                    #    else:
+                    #        samples.append(float(row))     
  
  
                all_signals_in_directory.setdefault(filename, [time, amplitude])
@@ -155,10 +155,12 @@ class Seismology:
    '''
    # plot.figure is out of function in order to increase productivity of a function
    # function is called 2*N times
-   plt.figure(figsize=(12, 8))
+   
  
    def plot_signal(self, x, y, filename, x_label='', y_label='', y_averaged=None, x_limit=[], path=None):
  
+       plt.figure(figsize=(12, 8))
+
        plt.plot(x, y)
  
        # if was calculated average of amplitudes
@@ -180,6 +182,8 @@ class Seismology:
            plt.savefig(join(path, normal_filename+".png"))
        else:
            plt.show()
+
+       plt.close()    
  
  
 def main():
@@ -196,13 +200,13 @@ def main():
  
            for filename, signal in signals.items():
                averaged_signal = seism.average(signal[1], average_window)
-               seism.plot_signal(signal[0], signal[1], filename, "t, s", "Ampl", averaged_signal) #, path="%s/%s" % (path, signals_folder_name))
-               # seism.plot_signal(signal[0], averaged_signal, filename, "t, s", "Ampl")
+               seism.plot_signal(signal[0], signal[1], filename, "t, s", "Ampl", averaged_signal, path="%s/%s" % (path, signals_folder_name))
+            #    seism.plot_signal(signal[0], averaged_signal, filename, "t, s", "Ampl")
  
                signal_fft, freq = seism.fourier_transform(signal, path, transformed_signals_folder_name)
                averaged_fft = seism.average(signal_fft, average_window)
-               seism.plot_signal(freq, signal_fft, filename, "freq, Hz", "FFT.abs", averaged_fft, x_limit=[0, 0.2]) #, path="%s/%s" % (path, transformed_signals_folder_name))
-               # seism.plot_signal(freq, averaged_fft, filename, "freq, Hz", "FFT.abs", x_limit=[0, 0.1])
+               seism.plot_signal(freq, signal_fft, filename, "freq, Hz", "FFT.abs", averaged_fft, x_limit=[0,1], path="%s/%s" % (path, transformed_signals_folder_name))
+            #    seism.plot_signal(freq, averaged_fft, filename, "freq, Hz", "FFT.abs", x_limit=[0, 0.1])
  
        except Exception as e:
            print(e)
