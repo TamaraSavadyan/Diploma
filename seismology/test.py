@@ -1,16 +1,32 @@
 import numpy as np
-import pandas as pd
-import shapefile as shp
 import matplotlib.pyplot as plt
-import seaborn as sns
+from matplotlib.widgets import CheckButtons
 
-sns.set(style="whitegrid", palette='pastel', color_codes=True) 
-sns.mpl.rc('figure', figsize=(10,6))
+t = np.arange(0.0, 2.0, 0.01)
+s0 = np.sin(2*np.pi*t)
+s1 = np.sin(4*np.pi*t)
+s2 = np.sin(6*np.pi*t)
 
-# opening the vector 
-mapshp_path = "\\District_Boundary.shp" # reading the shape file by using reader function of the shape 
-shp_path = ''
-libsf = shp.Reader(shp_path)
+fig, ax = plt.subplots()
+l0, = ax.plot(t, s0, visible=False, lw=2, color='k', label='2 Hz')
+l1, = ax.plot(t, s1, lw=2, color='r', label='4 Hz')
+l2, = ax.plot(t, s2, lw=2, color='g', label='6 Hz')
+plt.subplots_adjust(left=0.2)
 
-# t = len(sf.shapes())
-# sf.records()
+lines = [l0, l1, l2]
+
+# Make checkbuttons with all plotted lines with correct visibility
+rax = plt.axes([0.05, 0.4, 0.1, 0.15])
+labels = [str(line.get_label()) for line in lines]
+visibility = [line.get_visible() for line in lines]
+check = CheckButtons(rax, labels, visibility)
+
+
+def func(label):
+    index = labels.index(label)
+    lines[index].set_visible(not lines[index].get_visible())
+    plt.draw()
+
+check.on_clicked(func)
+
+plt.show()

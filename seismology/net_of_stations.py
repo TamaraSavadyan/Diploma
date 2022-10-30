@@ -6,27 +6,19 @@ from csv import reader
 '''
 GETTING DATA NEEDED TO PLOT
 '''
-def get_data(csv_file, name_pos, net_names_pos, lat_pos, lon_pos, magnitude_pos=None):
-    names, net_names, lat, lon, magnitudes = [], [], [], [], []
+#!! Rewrite this function with *args or **kwargs (probably *args)
+def get_data(csv_file, pos, amount_of_rows_to_delete=2):
+    data = []
     with open(csv_file, 'r') as file:
         csv_reader = reader(file)
         for row in csv_reader:
-            if row[name_pos]:
-                names.append(row[name_pos])
-                net_names.append(row[net_names_pos])
-                lat.append(row[lat_pos])
-                lon.append(row[lon_pos])
-                if magnitude_pos:
-                    magnitudes.append(row[magnitude_pos])
+            if row[pos]:
+                data.append(row[pos])
 
-        for _ in range(2):
-            del names[0]
-            del net_names[0]
-            del lat[0]
-            del lon[0]
-            # del magnitudes[0]
-         
-    return names, net_names, lon, lat
+        for _ in range(amount_of_rows_to_delete):
+            del data[0]
+            
+    return data
  
 '''
 GETTING UNIQUE OBSERVATION POINT NAME
@@ -45,23 +37,26 @@ def getting_unique(csv_file, name_pos):
 '''
 PLOTTING
 '''
-def plot_stuff(x, y, z, names):
- 
-   plt.figure(figsize=(12, 8))
- 
-   plt.scatter(x, y, z, c=z, cmap='seismic', alpha=0.5, label="Amount of records")
-   plt.colorbar()
- 
-   for i, record in enumerate(names):
-       plt.annotate(record, (x[i], y[i]), fontsize=8)
- 
- 
-   plt.title("Amount of data at Caucasus stations")
-   plt.xlabel("latitude")
-   plt.ylabel("longtitude")
-   plt.legend(loc='upper right')
-   plt.grid()
-   plt.show()
+def plot_stuff(x, y, z, names, data_label='not labeled', title=''):
+
+    plt.figure(figsize=(12, 8))
+
+    # plt.scatter(x, y, z, c=z, cmap='seismic', alpha=0.1, label=data_label)
+    # plt.colorbar()
+    
+    plt.plot(x, y, linestyle=':', marker='h', markerfacecolor='purple', alpha=0.5, label=data_label)
+    # plt.fill_between(x, y)
+
+    for i, record in enumerate(names):
+        plt.annotate(record, (x[i], y[i]), fontsize=8)
+
+
+    plt.title(title)
+    plt.xlabel("latitude")
+    plt.ylabel("longtitude")
+    plt.legend(loc='upper right')
+    plt.grid()
+    plt.show()
  
 '''
 FUNCTIONS TO USE IN __main__ SECTION
@@ -81,20 +76,25 @@ def count_observation_names():
  
 def main():
  
-   station_names, net_names, lon, lat = get_data('./initial-data/seismology_all.csv', 3, 0, 7, 6)
- 
-#    net_names_sorted = sorted(net_names)
-#    station_names_sorted = [x for _, x in sorted(zip(net_names_sorted, station_names))]
- 
-   lon_x = list(map(float, lon))         
-   lat_y = list(map(float, lat))
+    station_names = get_data('./initial-data/seismology_all.csv', 3)
+    net_names = get_data('./initial-data/seismology_all.csv', 0)
+    lon = get_data('./initial-data/seismology_all.csv', 7)
+    lat = get_data('./initial-data/seismology_all.csv', 6)
+    alt = get_data('./initial-data/seismology_all.csv', 8)
 
-   z = np.linspace(1, 1, len(station_names)) 
-   plot_stuff(lon_x, lat_y, z, (station_names, net_names))
+    unique_observation_names = count_observation_names()
+    # net_names_sorted = sorted(net_names)
+    # station_names_sorted = [x for _, x in sorted(zip(net_names_sorted, station_names))]
+
+    lon_y = list(map(float, lon))         
+    lat_x = list(map(float, lat))
+    alt_z = list(map(float, alt))
+
+    all_names = zip(station_names, net_names)
+
+    plot_stuff(lat_x, lon_y, alt_z, all_names)
  
  
  
 if __name__ == '__main__':
-   main()
- 
-#    count_observation_names()
+    main()
