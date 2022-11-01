@@ -3,20 +3,19 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import CheckButtons
 
 t = np.arange(0.0, 2.0, 0.01)
-s0 = np.sin(2*np.pi*t)
-s1 = np.sin(4*np.pi*t)
-s2 = np.sin(6*np.pi*t)
 
 fig, ax = plt.subplots()
-l0, = ax.plot(t, s0, visible=False, lw=2, color='k', label='2 Hz')
-l1, = ax.plot(t, s1, lw=2, color='r', label='4 Hz')
-l2, = ax.plot(t, s2, lw=2, color='g', label='6 Hz')
+lines = []
+for i in range(1, 5):
+    s = np.sin(i*np.pi*t)
+    l, = ax.plot(t, s, lw=2, label="%s Hz"%i)
+    lines.append(l)
+
 plt.subplots_adjust(left=0.2)
 
-lines = [l0, l1, l2]
 
 # Make checkbuttons with all plotted lines with correct visibility
-rax = plt.axes([0.05, 0.4, 0.1, 0.15])
+rax = plt.axes([0.05, 0.5, 0.1, 0.2])  # 4-tuple of floats rect = [left, bottom, width, height]
 labels = [str(line.get_label()) for line in lines]
 visibility = [line.get_visible() for line in lines]
 check = CheckButtons(rax, labels, visibility)
