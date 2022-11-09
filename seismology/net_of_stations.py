@@ -53,43 +53,53 @@ def plot_stuff(x, y, names, data_label='not labeled', title='', unique_list=[],
 
     # using matplotlib checkbuttons to show explicit data
     if unique_list:
-        # print(unique_list)
+        # setting all lists and dicts needed to function
         new_plots = []
-        x_new = []
-        y_new = []
-        names_new = []
+        x_unique = dict()
+        y_unique = dict()
+        names_unique = dict()
 
+        # getting all coordinates for every net of observations
         for unique in unique_list:
-            for i, record in enumerate(names):
-                if unique == record[1]:
-                    x_new.append(x[i])
-                    y_new.append(y[i])
-                    names_new.append(names[i])
+                x_unique.setdefault(unique, [])
+                y_unique.setdefault(unique, [])
+                names_unique.setdefault(unique, [])
+                for k, record in enumerate(names):
+                    if unique == record[1]:
+                        x_unique[unique].append(x[k])
+                        y_unique[unique].append(y[k])
+                        names_unique[unique].append(names[k])
 
-            if x_new:
-                # x_new.append(quake_coord)
-                # y_new.append(quake_coord)
-                date = 'some str'
-                new_plot, = plt.plot(x_new, y_new, visible=False, linestyle=':',
-                                     marker='h', markerfacecolor='purple', alpha=0.5, label=unique)
-                # earthquake_plot, = plt.plot(x_new[0], y_new[0], marker='*', visible=False, label='earthquake')
-                new_plots.append(new_plot)
-                # new_plots.append(earthquake_plot)
+            # looping through all net names to match it with observation names of stations
+            # to show earthquake and stations that recorded it
+        for i, net in enumerate(earthquake_net_list):
+            if i == 10:
+                break
 
-                for i, record in enumerate(names_new):
-                    plt.annotate(record[0], (x_new[i], y_new[i]), fontsize=8)
-                    # plt.text(x_new[i], y_new[i], record[0], fontsize=8)
+            for unique in unique_list:
+                if x_unique[unique]:
+                    if net == unique:
+                        x_unique[unique].append(earthquake_coord_list[i][0])
+                        y_unique[unique].append(earthquake_coord_list[i][1])
+                        label_name = date_list[i] + ' ' + unique
+                        new_plot, = plt.plot(x_unique[unique], y_unique[unique], visible=False, linestyle=':',
+                                                marker='h', markerfacecolor='red', alpha=0.5, label=label_name)
+                        # earthquake_plot, = plt.plot(x_unique[0], y_unique[0], marker='*', visible=False, label='earthquake')
+                        new_plots.append(new_plot)
+                        # new_plots.append(earthquake_plot)
+                        plt.annotate(magnitude_list[i], (x_unique[unique][-1], y_unique[unique][-1]), fontsize=10, color='red')
+                        for j, name in enumerate(names_unique[unique]):
+                            plt.annotate(name[0], (x_unique[unique][j], y_unique[unique][j]), fontsize=8)
+                        
+                        del x_unique[unique][-1]
+                        del y_unique[unique][-1]
 
-            plt.xlabel("latitude")
-            plt.ylabel("longtitude")
-
-            x_new.clear()
-            y_new.clear()
-            names_new.clear()
+        plt.xlabel("latitude")
+        plt.ylabel("longtitude")
 
         # Make checkbuttons with all plotted lines with correct visibility
         # 4-tuple of floats rect = [left, bottom, width, height]
-        rax = plt.axes([0.05, 0.6, 0.11, 0.25])
+        rax = plt.axes([0, 0.4, 0.155, 0.5])
         labels = [str(line.get_label()) for line in new_plots]
         visibility = [line.get_visible() for line in new_plots]
         check = CheckButtons(rax, labels, visibility)
@@ -100,6 +110,12 @@ def plot_stuff(x, y, names, data_label='not labeled', title='', unique_list=[],
             plt.draw()
 
         check.on_clicked(func)
+
+    
+        plt.title(title)
+        plt.grid()
+        plt.show()    
+
     else:
         print('inside else')
         plt.plot(x, y, linestyle=':', marker='h',
@@ -107,10 +123,9 @@ def plot_stuff(x, y, names, data_label='not labeled', title='', unique_list=[],
         for i, record in enumerate(names):
             plt.annotate(record, (x[i], y[i]), fontsize=8)
 
-    plt.title(title)
-    # plt.legend(loc='upper right')
-    plt.grid()
-    plt.show()
+        plt.title(title)
+        plt.grid()
+        plt.show()
 
 
 '''
@@ -147,16 +162,16 @@ def main():
 
     lon_y = list(map(float, lon))
     lat_x = list(map(float, lat))
-
-    # all_names = []
-    # for station in station_names:
-    #     for observation in net_names:
-    #         all_names.append([station, observation])
+    coord_earthquakes = list(zip(map(float, lat_earthquakes), map(float, lon_earthquakes)))
 
     all_names = list(zip(station_names, net_names))
 
-    plot_stuff(lat_x, lon_y, all_names, unique_list=unique_observation_names)
+    for i in range(0, len(net_earthquakes[0:30]), 10):
+        plot_stuff(lat_x, lon_y, all_names, unique_list=unique_observation_names,
+        magnitude_list=magnitudes[i:i+10], date_list=dates[i:i+10], earthquake_coord_list=coord_earthquakes[i:i+10],
+        earthquake_net_list=net_earthquakes[i:i+10])
 
 
 if __name__ == '__main__':
     main()
+    
