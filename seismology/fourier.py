@@ -200,12 +200,20 @@ def main():
  
            for filename, signal in signals.items():
                averaged_signal = seism.average(signal[1], average_window)
-               seism.plot_signal(signal[0], signal[1], filename, "t, s", "Ampl", averaged_signal, path="%s/%s" % (path, signals_folder_name))
+               ''' saving images '''
+            #    seism.plot_signal(signal[0], signal[1], filename, "t, s", "Ampl", averaged_signal, path="%s/%s" % (path, signals_folder_name))
+               ''' showing result '''
+               seism.plot_signal(signal[0], signal[1], filename, "t, s", "Ampl", averaged_signal, x_limit=[20,80])
+               ''' showing averaged only '''
             #    seism.plot_signal(signal[0], averaged_signal, filename, "t, s", "Ampl")
  
                signal_fft, freq = seism.fourier_transform(signal, path, transformed_signals_folder_name)
                averaged_fft = seism.average(signal_fft, average_window)
-               seism.plot_signal(freq, signal_fft, filename, "freq, Hz", "FFT.abs", averaged_fft, x_limit=[0,1], path="%s/%s" % (path, transformed_signals_folder_name))
+               ''' saving images '''
+            #    seism.plot_signal(freq, signal_fft, filename, "freq, Hz", "FFT.abs", averaged_fft, x_limit=[0,1], path="%s/%s" % (path, transformed_signals_folder_name))
+               ''' showing result '''
+               seism.plot_signal(freq, signal_fft, filename, "freq, Hz", "FFT.abs", averaged_fft, x_limit=[0,1])
+               ''' showing averaged only '''
             #    seism.plot_signal(freq, averaged_fft, filename, "freq, Hz", "FFT.abs", x_limit=[0, 0.1])
  
        except Exception as e:
