@@ -30,8 +30,9 @@ def get_data(csv_file, name_pos, amount_pos, lat_pos, lon_pos, alt_pos):
 names, amount, lon, lat, alt = get_data('./initial-data/seismology_all.csv', 3, 4, 7, 6, 8)
 # print(list(map(float, amount))) 
  
-lon_x = list(map(float, lon))         
-lat_y = list(map(float, lat))
+       
+lat_x = list(map(float, lat))
+lon_y = list(map(float, lon))
 alt_z = list(map(int, alt))
 amount_int = list(map(int, amount))
  
@@ -56,5 +57,5 @@ def plot_stuff(x, y, z, names):
    plt.show()
  
  
-plot_stuff(lon_x, lat_y, amount_int, names)   
+plot_stuff(lat_x, lon_y, amount_int, names)   
  

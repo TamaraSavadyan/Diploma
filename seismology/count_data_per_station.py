@@ -27,7 +27,6 @@ class Seismology_automation:
                        else:
                            stations_list.append(row[item])
                       
-                    
        return stations_list
  
  

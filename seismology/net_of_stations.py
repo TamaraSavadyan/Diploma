@@ -166,7 +166,7 @@ def main():
 
     all_names = list(zip(station_names, net_names))
 
-    for i in range(0, len(net_earthquakes[0:30]), 10):
+    for i in range(0, len(net_earthquakes[0:15]), 10):
         plot_stuff(lat_x, lon_y, all_names, unique_list=unique_observation_names,
         magnitude_list=magnitudes[i:i+10], date_list=dates[i:i+10], earthquake_coord_list=coord_earthquakes[i:i+10],
         earthquake_net_list=net_earthquakes[i:i+10])
